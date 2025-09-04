@@ -7,6 +7,7 @@ import ProductionTracking from './components/ProductionTracking';
 import SystemFeatures from './components/SystemFeatures';
 import OperatorInterface from './components/OperatorInterface';
 import AdminInterface from './components/AdminInterface';
+import InventoryManagement from './components/InventoryManagement';
 
 interface ItemState {
   id: number;
@@ -54,6 +55,8 @@ function App() {
   const [productType, setProductType] = useState('Water');
   const [bottleSize, setBottleSize] = useState(500);
 
+  const [hopperLevel, setHopperLevel] = useState(100);
+
   useEffect(() => {
     if (isEmergencyStopped) return;
 
@@ -75,6 +78,7 @@ function App() {
 
       const newFilled = Math.min(newProcessed, nozzles.filter((n) => n.isActive).length);
       setBottlesFilled((prev) => prev + newFilled);
+      setHopperLevel(prev => Math.max(0, prev - newFilled * 0.1));
 
       const newCapped = Math.min(newFilled, cappers.filter(c => c.isActive).length);
       setBottlesCapped(prev => prev + newCapped);
@@ -158,6 +162,7 @@ function App() {
               setBottleSize={setBottleSize}
             />
             <AdminInterface />
+            <InventoryManagement hopperLevel={hopperLevel} />
             <SensorGrid sensors={sensors} />
             <GroupingStation
               packSize={packSize}
